@@ -1,0 +1,25 @@
+*** This is a test sheet for a character
+*** Indicates comment, and you read the file using the read_character function
+
+*** In order to declare a character name, use the following syntax
+*** char_name custom_name with_spaces
+
+*** You can call the variable whatever you want
+*** But must be in one word, and can't start with *** 
+*** every charline must end with the command dtype=<x>
+*** where <x> specifies wether the value is  a float, int or string
+*** If not specified, it will default to string
+
+char_name       Ikaros Anakalathai  dtype=str
+char_class      Barbarian           dtype=str
+char_race       Goliath             dtype=str
+char_background Pirate              dtype=str
+char_level      5                   dtype=int
+char_hp         60                  dtype=float
+str             20                  dtype=int
+dex             16                  dtype=int
+con             18                  dtype=int
+int             11                  dtype=int
+wis             14                  dtype=int
+cha             16                  dtype=int
+wealth          33.22               dtype=float
