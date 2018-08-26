@@ -10,6 +10,27 @@ class Engine(object):
     def init(self):
         self.creator = "LwiD"
 
+    def readlist(self, list_given, list_dtype):
+        #A simple function to interpret list input, assuming the input is on the form [1,2,3,4] or [1, 2, 3, 4]
+        started = False
+        list_got = []
+        for letter in list_given:
+            if letter == "[":
+                started = True
+                new = True
+            if started and new and letter != "," and letter != "[":
+                list_element = letter
+                new = False
+            elif started and not new and letter != "," and letter != "]":
+                list_element += letter
+            elif started and letter == ",":
+                list_got.append( list_dtype(list_element) )
+                new = True
+            if letter == "]":
+                list_got.append( list_dtype(list_element) )
+                break
+        return list_got
+
     def run_menu(self):
         #This is where the fun happens
         #And where the application is launched
@@ -22,7 +43,7 @@ class Engine(object):
             print("(1) Read a character \n")
             print("(2) Create a character \n")
             print("(c) Credits \n")
-            print("(3) Exit \n")
+            print("(e) Exit \n")
             choice = input()
             if choice == "1":
                 #This block is the loading of a preexisting character.
@@ -64,7 +85,7 @@ class Engine(object):
                 print("This program was created by: Lars, Bingedrinker of Coffee\n")
                 input("Press enter to go back")
 
-            if choice == "3":
+            if choice == "e":
                 break
         
     def read_character(self, sheet):
@@ -123,14 +144,12 @@ class DnD5e(Engine):
                 print("Since you rolled for stats, you get to assign the following numbers as your stats:\n")
                 print(stats_rolled)
             
-            char_stats = sc.array(input())
+            char_stats = self.readlist(input(), list_dtype=int)
+            char_stats = sc.array(char_stats)
             stat_mods = self.get_mods(char_race)
-            
+
+
             filename = char_name + ".dat"
-            print(char_stats, type(char_stats), len(char_stats))
-            input()
-            print(stat_mods, type(stat_mods), stat_mods[0])
-            input()
             with open(filename, "w+") as newsheet:
                 #newsheet.write("*** Character created at %c" %(time.clock()))
                 newsheet.write("\nchar_name %s dtype=str" %(char_name))
@@ -138,12 +157,12 @@ class DnD5e(Engine):
                 newsheet.write("\nchar_race %s dtype=str" % (char_race))
                 newsheet.write("\nchar_background %s dtype=str"% (char_background))
                 newsheet.write("\nchar_level %d dtype=int" %(char_level))
-                newsheet.write("\nstr %d dtype=int" % (int(char_stats[0]) + stat_mods[0]))
-                newsheet.write("\ndex %d dtype=int" % (int(char_stats[1]) + stat_mods[1]))
-                newsheet.write("\ncon %d dtype=int" % (int(char_stats[2]) + stat_mods[2]))
-                newsheet.write("\nint %d dtype=int" % (int(char_stats[3]) + stat_mods[3]))
-                newsheet.write("\nwis %d dtype=int" % (int(char_stats[4]) + stat_mods[4]))
-                newsheet.write("\ncha %d dtype=int" % (int(char_stats[5]) + stat_mods[5]))
+                newsheet.write("\nstr %d dtype=int" % (char_stats[0] + stat_mods[0]))
+                newsheet.write("\ndex %d dtype=int" % (char_stats[1] + stat_mods[1]))
+                newsheet.write("\ncon %d dtype=int" % (char_stats[2] + stat_mods[2]))
+                newsheet.write("\nint %d dtype=int" % (char_stats[3] + stat_mods[3]))
+                newsheet.write("\nwis %d dtype=int" % (char_stats[4] + stat_mods[4]))
+                newsheet.write("\ncha %d dtype=int" % (char_stats[5] + stat_mods[5]))
         return False
 
     def get_mods(self, race):
@@ -189,8 +208,9 @@ class DnD5e(Engine):
 
         else:
             print("The race you've given: %s is currently not supported!" % (race))
-            print("This might be because it doesn't exist, or you might have written it wrong.")
-            skill_mod_inputted = sc.array(input("Please write in your racial bonuses like this [<str>, <dex>, <con>, <int>, <wis>, <cha>]"))
+            print("This might be because it doesn't exist, or you might have written it wrong.\n")
+            print("Please write in your racial bonuses like this [<str>, <dex>, <con>, <int>, <wis>, <cha>]\n")
+            skill_mod_inputted = self.readlist(input())
             for i, skill in enumerate(skill_mod_inputted):
                 skill_mod[i] = int(skill)
 
